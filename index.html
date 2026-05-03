@@ -1,0 +1,1689 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Héctor Parra | Portafolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+<!--
+=============================================================
+  GUÍA DE ESTRUCTURA DE CARPETAS
+=============================================================
+  Crea esta estructura junto a tu archivo HTML:
+
+  Mi_Portafolio/
+  ├── Web1_1.html          ← este archivo
+  ├── fotos/
+  │   ├── futbol.jpg       ← imagen del Barça / fútbol
+  │   ├── auto1.jpg        ← Mazda MX-5
+  │   ├── auto2.jpg        ← Corvette
+  │   ├── auto3.jpg        ← Porsche
+  │   ├── paris.jpg        ← viaje París
+  │   ├── italia.jpg       ← viaje Italia
+  │   ├── suiza.jpg        ← viaje Suiza
+  │   ├── machu_picchu.jpg ← viaje Machu Picchu
+  │   ├── canada.jpg       ← viaje Canadá
+  │   ├── londres.jpg      ← viaje Londres
+  │   ├── arte1.jpg        ← imagen grande de arte
+  │   ├── arte2.jpg        ← imagen pequeña arte 1
+  │   └── arte3.jpg        ← imagen pequeña arte 2
+  └── musica/
+      ├── cancion1.mp3     ← primera canción
+      ├── cancion2.mp3     ← segunda canción
+      └── cancion3.mp3     ← tercera canción
+
+  Para usar una imagen local, pon: src="fotos/nombre_archivo.jpg"
+  Para usar música local, pon: src: "musica/nombre_cancion.mp3"
+=============================================================
+-->
+
+<style>
+/* ================================================
+   VARIABLES GLOBALES DE COLOR Y TIPOGRAFÍA
+   Cambia --bg para el color de fondo principal
+   Cambia --fg para el color principal del texto
+================================================ */
+:root {
+  --bg: hsl(201,100%,13%);
+  --fg: #fff;
+  --muted: hsl(240,4%,66%);
+  --border: hsl(0,0%,18%);
+  --font-display: 'Instrument Serif', serif;
+  --font-body: 'Inter', sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);overflow-x:hidden}
+
+/* ================================================
+   VIDEO DE FONDO
+   Si quieres cambiar el video por uno local:
+   <source src="fotos/mi_video.mp4" type="video/mp4">
+================================================ */
+video.bg-video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;opacity:1}
+/* El overlay base es casi transparente en el hero; el JS lo oscurece al hacer scroll */
+.overlay{
+  position:fixed;inset:0;z-index:1;pointer-events:none;
+  transition:background 0.4s ease;
+  background:linear-gradient(to bottom,rgba(0,15,40,0.25),rgba(0,10,30,0.35));
+}
+/* Clase que se agrega con JS cuando el usuario sale del hero */
+.overlay.scrolled{
+  background:linear-gradient(to bottom,rgba(0,15,40,0.82),rgba(0,8,24,0.88));
+}
+.content{position:relative;z-index:10}
+
+/* Efecto vidrio líquido (glass morphism) */
+.liquid-glass{background:rgba(255,255,255,0.04);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:none;box-shadow:inset 0 1px 1px rgba(255,255,255,0.1);position:relative;overflow:hidden}
+.liquid-glass::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1.4px;background:linear-gradient(180deg,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 20%,rgba(255,255,255,0) 40%,rgba(255,255,255,0) 60%,rgba(255,255,255,0.15) 80%,rgba(255,255,255,0.45) 100%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+
+/* Animaciones de aparición al hacer scroll */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-left.visible{opacity:1;transform:translateX(0)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-right.visible{opacity:1;transform:translateX(0)}
+.reveal-scale{opacity:0;transform:scale(0.92);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal-scale.visible{opacity:1;transform:scale(1)}
+
+/* Animaciones de entrada al cargar la página */
+@keyframes fade-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.fade-rise{animation:fade-rise 0.8s ease-out both}
+.fade-rise-d1{animation:fade-rise 0.8s ease-out 0.2s both}
+.fade-rise-d2{animation:fade-rise 0.8s ease-out 0.4s both}
+.fade-rise-d3{animation:fade-rise 0.8s ease-out 0.6s both}
+.fade-rise-d4{animation:fade-rise 0.8s ease-out 0.8s both}
+
+/* Divisores decorativos entre secciones */
+.section-divider{width:100%;height:120px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.divider-line{width:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,255,255,0.3),transparent);transition:width 1.2s ease;max-width:900px}
+.divider-line.visible{width:100%}
+
+/* Sección Hero (portada principal) */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 1.5rem}
+.hero h1{font-family:var(--font-display);font-size:clamp(3rem,8vw,7rem);font-weight:400;line-height:0.95;letter-spacing:-0.05em;max-width:900px;color:var(--fg)}
+.hero h1 em{font-style:normal;color:var(--muted)}
+.hero p{color:var(--muted);font-size:1.1rem;max-width:600px;margin-top:2rem;line-height:1.7}
+.hero-cta{margin-top:3rem;padding:1.2rem 3.5rem;border-radius:999px;font-size:1rem;color:var(--fg);cursor:pointer;background:transparent;border:none;transition:transform 0.2s}
+.hero-cta:hover{transform:scale(1.03)}
+.scroll-hint{margin-top:4rem;color:var(--muted);font-size:0.8rem;letter-spacing:0.1em;text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:0.5rem}
+.scroll-hint span{display:block;width:1px;height:40px;background:linear-gradient(to bottom,rgba(255,255,255,0.3),transparent);margin:0 auto}
+
+/* Configuración base de todas las secciones */
+section{max-width:1100px;margin:0 auto;padding:5rem 2rem}
+.section-label{font-size:0.72rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem}
+.section-title{font-family:var(--font-display);font-size:clamp(2.5rem,5vw,4rem);font-weight:400;line-height:1.05;margin-bottom:2.5rem}
+
+/* Barra de navegación */
+nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 2rem;max-width:1200px;margin:0 auto}
+.logo{font-family:var(--font-display);font-size:1.8rem;color:var(--fg);letter-spacing:-0.02em;cursor:pointer}
+.nav-links{display:flex;gap:2rem;list-style:none}
+.nav-links a{font-size:0.875rem;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover,.nav-links a.active{color:var(--fg)}
+.nav-cta{padding:0.6rem 1.5rem;border-radius:999px;font-size:0.875rem;color:var(--fg);cursor:pointer;background:transparent;border:none;transition:transform 0.2s}
+.nav-cta:hover{transform:scale(1.03)}
+
+/* Contenedor de la portada expansible */
+.big-art-wrapper {
+  width: 100%;
+  display: flex;             /* Usamos flexbox para centrar */
+  justify-content: center;   /* Centra la imagen horizontalmente */
+  max-height: 0; 
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.7s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease, margin 0.5s ease;
+}
+
+/* Clase que se activa cuando le das play */
+.big-art-wrapper.active {
+  max-height: 350px; /* Le damos un poco más de margen para que quepa bien el cuadrado */
+  opacity: 1;
+  margin-bottom: 1.5rem;
+}
+
+/* La imagen cuadrada de la portada */
+#big-art-img {
+  width: 280px;      /* Ancho fijo */
+  height: 280px;     /* Alto fijo = Cuadrado perfecto */
+  object-fit: cover;
+  border-radius: 1rem; /* Bordes ligeramente redondeados */
+  box-shadow: 0 15px 35px rgba(0,0,0,0.4); /* Una sombra elegante para que resalte */
+}
+
+/* Sección Biografía */
+.bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start}
+.bio-text{font-size:1.05rem;line-height:1.8;color:rgba(255,255,255,0.8)}
+.tag{padding:0.4rem 1rem;border-radius:999px;font-size:0.8rem;color:rgba(255,255,255,0.7);display:inline-block;margin:0.3rem}
+.bio-card{padding:2rem;border-radius:1.5rem;display:flex;flex-direction:column;gap:1.5rem}
+.bio-stat-val{font-family:var(--font-display);font-size:2.5rem;color:var(--fg);display:block}
+.bio-stat-lbl{font-size:0.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em}
+
+/* Tarjeta de fútbol / FCB */
+.fcb-hero{border-radius:2rem;overflow:hidden;position:relative;min-height:280px;display:flex;align-items:flex-end}
+.fcb-hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 0.6s ease}
+.fcb-hero:hover img{transform:scale(1.04)}
+.fcb-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.85) 0%,rgba(0,0,0,0.2) 60%,transparent 100%)}
+.fcb-hero-content{position:relative;z-index:2;padding:2rem;width:100%}
+.fcb-shield{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#004d98,#a50044);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:1.2rem;font-weight:700;color:#fff}
+
+/* Carrusel de autos */
+.cars-scroll{display:flex;gap:1rem;overflow-x:auto;padding-bottom:1remscrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.2) transparent}
+.car-card{flex-shrink:0;width:220px;border-radius:1.25rem;overflow:hidden;position:relative;cursor:pointer;transition:transform 0.3s}
+.car-card:hover{transform:scale(1.03)}
+.car-card img{width:100%;height:140px;object-fit:cover;display:block}
+.car-card:hover img{transform:scale(1.08)}
+.car-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)}
+.car-label{position:absolute;bottom:0;left:0;right:0;padding:1rem;font-family:var(--font-display);font-size:1rem}
+.car-flag{font-size:1.4rem}
+
+
+/* Grid de viajes */
+.travels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.travel-card{border-radius:1.25rem;overflow:hidden;position:relative;aspect-ratio:1;cursor:pointer;transition:transform 0.3s}
+.travel-card:hover{transform:scale(1.03)}
+.travel-card img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s ease}
+.travel-card:hover img{transform:scale(1.08)}
+.travel-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 60%)}
+.travel-label{position:absolute;bottom:0;left:0;right:0;padding:1rem;font-family:var(--font-display);font-size:1rem}
+.travel-flag{font-size:1.4rem}
+
+/* ================================================
+   REPRODUCTOR DE MÚSICA
+   Controles: play/pause, barra de progreso, volumen
+================================================ */
+.music-player{border-radius:1.5rem;padding:1.5rem;overflow:hidden}
+.music-now{display:flex;align-items:center;gap:1.25rem;margin-bottom:1rem}
+.music-art-placeholder{width:70px;height:70px;border-radius:0.75rem;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:2rem}
+.track-item{display:flex;align-items:center;gap:1rem;padding:0.75rem 1rem;border-radius:0.9rem;cursor:pointer;transition:background 0.2s}
+.track-item:hover,.track-item.playing{background:rgba(255,255,255,0.07)}
+.track-btn{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;cursor:pointer;font-size:0.85rem}
+
+/* Barra de progreso del reproductor */
+.progress-bar-wrap{margin:0.5rem 0 1rem;display:flex;align-items:center;gap:0.75rem}
+.progress-bar{flex:1;height:3px;background:rgba(255,255,255,0.15);border-radius:999px;cursor:pointer;position:relative}
+.progress-fill{height:100%;background:rgba(255,255,255,0.7);border-radius:999px;width:0%;transition:width 0.1s linear;pointer-events:none}
+.time-label{font-size:0.72rem;color:var(--muted);min-width:32px;text-align:right}
+.volume-wrap{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.5rem}
+.volume-slider{width:80px;accent-color:rgba(255,255,255,0.6);cursor:pointer}
+
+/* Mosaico de arte */
+.art-mosaic{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:auto;gap:1rem}
+.art-big{grid-row:1/3;border-radius:1.25rem;overflow:hidden;position:relative;min-height:300px}
+.art-big img{width:100%;height:100%;object-fit:cover;display:block;transition:transform 0.5s}
+.art-big:hover img{transform:scale(1.05)}
+.art-small{border-radius:1.25rem;overflow:hidden;position:relative}
+.art-small img{width:100%;height:160px;object-fit:cover;display:block;transition:transform 0.5s}
+.art-small:hover img{transform:scale(1.05)}
+.art-caption{position:absolute;bottom:0;left:0;right:0;padding:0.75rem 1rem;background:linear-gradient(to top,rgba(0,0,0,0.7),transparent);font-family:var(--font-display);font-size:0.9rem}
+
+
+
+/* Fila de películas */
+.cinema-row{display:flex;gap:1rem;overflow-x:auto;padding-bottom:0.75rem;scrollbar-width:thin;scrollbar-color:rgba(255,255,255,0.2) transparent}
+.movie-card{flex-shrink:0;width:160px;border-radius:1.1rem;overflow:hidden;transition:transform 0.3s;cursor:pointer}
+.movie-card:hover{transform:translateY(-6px)}
+.movie-card img{width:100%;height:240px;object-fit:cover;display:block}
+.movie-info{padding:0.6rem 0.75rem;background:rgba(255,255,255,0.05);backdrop-filter:blur(8px)}
+.movie-info span{font-size:0.78rem;color:rgba(255,255,255,0.8);line-height:1.3;display:block}
+
+/* Línea de tiempo (trayectoria) */
+.timeline{position:relative;padding-left:2rem}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,rgba(255,255,255,0.2),rgba(255,255,255,0.05))}
+.timeline-item{position:relative;padding:0 0 3rem 2rem}
+.timeline-item::before{content:'';position:absolute;left:-5px;top:6px;width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.4);border:1px solid rgba(255,255,255,0.2)}
+.timeline-item:last-child{padding-bottom:0}
+.timeline-date{font-size:0.75rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.5rem}
+.timeline-place{font-family:var(--font-display);font-size:1.4rem;font-weight:400;color:var(--fg);margin-bottom:0.5rem}
+.timeline-desc{font-size:0.9rem;color:rgba(255,255,255,0.65);line-height:1.6}
+.timeline-badge{display:inline-block;padding:0.2rem 0.75rem;border-radius:999px;font-size:0.75rem;margin-top:0.75rem;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5)}
+
+/* Tarjetas de idiomas */
+.idiomas-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem}
+.idioma-card{padding:1.75rem;border-radius:1.25rem}
+.idioma-name{font-family:var(--font-display);font-size:1.4rem;margin-bottom:0.25rem}
+.idioma-level{font-size:0.8rem;color:var(--muted);margin-bottom:0.25rem}
+.idioma-note{font-size:0.8rem;color:rgba(255,255,255,0.5);line-height:1.5}
+.level-bar{height:3px;background:rgba(255,255,255,0.1);border-radius:999px;overflow:hidden;margin:1rem 0}
+.level-fill{height:100%;background:linear-gradient(to right,rgba(255,255,255,0.6),rgba(255,255,255,0.2))}
+
+/* Estilos para las tarjetas de destinos con imagen */
+.destino-card {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  padding: 2rem 1.5rem;
+  transition: transform 0.3s ease;
+}
+.destino-card:hover {
+  transform: translateY(-5px);
+}
+.destino-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+  opacity: 0.3; /* Qué tan oscura/clara se ve la imagen */
+  transition: opacity 0.4s ease, transform 0.6s ease;
+}
+.destino-card:hover .destino-bg {
+  opacity: 0.6;
+  transform: scale(1.08); /* Pequeño zoom al pasar el mouse */
+}
+.destino-content {
+  position: relative;
+  z-index: 1; /* Mantiene el texto por encima de la foto */
+}
+
+
+/* ================================================
+   MODAL DE CONTACTO
+   Se activa al hacer clic en "Contáctame"
+================================================ */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:1000;
+  background:rgba(0,10,25,0.8);backdrop-filter:blur(8px);
+  align-items:center;justify-content:center;padding:1rem;
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:rgba(255,255,255,0.06);backdrop-filter:blur(20px);
+  border-radius:2rem;padding:2.5rem;max-width:480px;width:100%;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.1),0 40px 80px rgba(0,0,0,0.5);
+  position:relative;animation:fade-rise 0.4s ease both;
+}
+.modal-close{
+  position:absolute;top:1.2rem;right:1.2rem;
+  background:rgba(255,255,255,0.1);border:none;color:#fff;
+  width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;transition:background 0.2s;
+}
+.modal-close:hover{background:rgba(255,255,255,0.2)}
+.modal-title{font-family:var(--font-display);font-size:2rem;margin-bottom:0.3rem}
+.modal-sub{color:var(--muted);font-size:0.9rem;margin-bottom:2rem}
+.modal-field{margin-bottom:1.2rem}
+.modal-field label{display:block;font-size:0.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.4rem}
+.modal-field input,
+.modal-field textarea{
+  width:100%;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);
+  border-radius:0.75rem;padding:0.75rem 1rem;color:#fff;font-family:var(--font-body);
+  font-size:0.95rem;outline:none;transition:border-color 0.2s;
+}
+.modal-field input:focus,
+.modal-field textarea:focus{border-color:rgba(255,255,255,0.35)}
+.modal-field textarea{resize:vertical;min-height:100px}
+.modal-send{
+  width:100%;padding:0.9rem;border-radius:999px;border:none;cursor:pointer;
+  background:rgba(255,255,255,0.15);color:#fff;font-size:1rem;font-family:var(--font-body);
+  transition:background 0.2s,transform 0.2s;margin-top:0.5rem;
+}
+.modal-send:hover{background:rgba(255,255,255,0.25);transform:scale(1.02)}
+.modal-success{
+  display:none;text-align:center;padding:1rem 0;
+  font-family:var(--font-display);font-size:1.5rem;color:rgba(150,255,200,0.9);
+}
+
+/* ================================================
+   BOTÓN HAMBURGUESA (solo móvil)
+================================================ */
+.hamburger{
+  display:none;
+  flex-direction:column;justify-content:center;align-items:center;
+  gap:5px;width:40px;height:40px;background:transparent;border:none;
+  cursor:pointer;padding:0;z-index:200;
+}
+.hamburger span{
+  display:block;width:22px;height:2px;
+  background:var(--fg);border-radius:999px;
+  transition:transform 0.35s ease,opacity 0.25s ease,width 0.3s ease;
+  transform-origin:center;
+}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0;width:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+/* ================================================
+   DRAWER DE NAVEGACIÓN MÓVIL
+================================================ */
+.mobile-drawer{
+  display:none;
+  position:fixed;top:0;left:0;right:0;bottom:0;
+  z-index:150;
+  background:rgba(0,10,28,0.96);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;transition:opacity 0.35s ease;
+  pointer-events:none;
+}
+.mobile-drawer.open{opacity:1;pointer-events:all;}
+.mobile-drawer ul{
+  list-style:none;display:flex;flex-direction:column;
+  align-items:center;gap:0;width:100%;padding:0 2rem;
+}
+.mobile-drawer ul li{
+  width:100%;border-bottom:1px solid rgba(255,255,255,0.07);
+  opacity:0;transform:translateY(16px);
+  transition:opacity 0.3s ease,transform 0.3s ease;
+}
+.mobile-drawer ul li:first-child{border-top:1px solid rgba(255,255,255,0.07)}
+.mobile-drawer ul li a{
+  display:block;width:100%;padding:1.25rem 0;
+  font-family:var(--font-display);font-size:1.8rem;font-weight:400;
+  color:rgba(255,255,255,0.7);text-decoration:none;text-align:center;
+  transition:color 0.2s;
+}
+.mobile-drawer ul li a:hover,.mobile-drawer ul li a.active{color:var(--fg)}
+.mobile-drawer-cta{
+  margin-top:2.5rem;padding:0.9rem 3rem;border-radius:999px;
+  font-size:1rem;color:var(--fg);cursor:pointer;
+  background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+  backdrop-filter:blur(10px);transition:background 0.2s,transform 0.2s;
+  font-family:var(--font-body);
+  opacity:0;transform:translateY(16px);
+  transition:opacity 0.3s ease 0.30s,transform 0.3s ease 0.30s,background 0.2s;
+}
+.mobile-drawer-cta:hover{background:rgba(255,255,255,0.2);transform:scale(1.03)}
+.mobile-drawer.open ul li:nth-child(1){opacity:1;transform:translateY(0);transition-delay:0.05s}
+.mobile-drawer.open ul li:nth-child(2){opacity:1;transform:translateY(0);transition-delay:0.10s}
+.mobile-drawer.open ul li:nth-child(3){opacity:1;transform:translateY(0);transition-delay:0.15s}
+.mobile-drawer.open ul li:nth-child(4){opacity:1;transform:translateY(0);transition-delay:0.20s}
+.mobile-drawer.open ul li:nth-child(5){opacity:1;transform:translateY(0);transition-delay:0.25s}
+.mobile-drawer.open .mobile-drawer-cta{opacity:1;transform:translateY(0)}
+
+/* ================================================
+   BOTÓN VOLVER AL INICIO
+================================================ */
+#back-to-top{
+  display:block;width:fit-content;margin:0 auto 5rem;
+  padding:1rem 2.5rem;border-radius:999px;
+  font-family:var(--font-display);font-size:1.1rem;font-weight:400;
+  color:var(--fg);cursor:pointer;background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.18);
+  backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.12),0 8px 32px rgba(0,0,0,0.25);
+  transition:transform 0.25s ease,background 0.25s ease,box-shadow 0.25s ease;
+  letter-spacing:0.01em;
+}
+#back-to-top:hover{
+  transform:scale(1.04) translateY(-2px);
+  background:rgba(255,255,255,0.09);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.18),0 16px 40px rgba(0,0,0,0.3);
+}
+
+/* Diseño responsivo para móviles */
+@media(max-width:700px){
+  .bio-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
+  .nav-cta{display:none}
+  .hamburger{display:flex}
+  .mobile-drawer{display:flex}
+  .travels-grid{grid-template-columns:repeat(2,1fr)}
+  .art-mosaic{grid-template-columns:1fr}
+  .art-big{grid-row:auto}
+  .ing-grid{grid-template-columns:1fr!important}
+  .ing-cards{grid-template-columns:1fr!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ================================================
+  VIDEO DE FONDO
+  Para usar tu propio video:
+  1. Pon tu archivo de video en la carpeta "fotos/"
+  2. Cambia la URL de abajo por: src="fotos/mi_video.mp4"
+================================================ -->
+<video class="bg-video" autoplay loop muted playsinline>
+   <source src="video/BGvideo.mp4" type="video/mp4">
+</video>
+<div class="overlay"></div>
+
+<div class="content">
+
+<!-- NAV -->
+<nav class="fade-rise">
+  <div class="logo">HEPF<sup style="font-size:0.6rem">®</sup></div>
+  <ul class="nav-links">
+    <li><a href="#hero" class="active">Inicio</a></li>
+    <li><a href="#bio">Biografía</a></li>
+    <li><a href="#gustos">Gustos</a></li>
+    <li><a href="#trayectoria">Trayectoria</a></li>
+    <li><a href="#idiomas">Idiomas</a></li>
+  </ul>
+  <!-- Botón Contáctame: abre el modal al hacer clic -->
+  <button class="nav-cta liquid-glass" onclick="abrirContacto()">Contáctame</button>
+  <!-- Hamburguesa (solo visible en móvil) -->
+  <button class="hamburger" id="hamburger-btn" onclick="toggleDrawer()" aria-label="Menú">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- DRAWER DE NAVEGACIÓN MÓVIL -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="#hero" onclick="closeDrawer()">Inicio</a></li>
+    <li><a href="#bio" onclick="closeDrawer()">Biografía</a></li>
+    <li><a href="#gustos" onclick="closeDrawer()">Gustos</a></li>
+    <li><a href="#trayectoria" onclick="closeDrawer()">Trayectoria</a></li>
+    <li><a href="#idiomas" onclick="closeDrawer()">Idiomas</a></li>
+  </ul>
+  <button class="mobile-drawer-cta" onclick="closeDrawer();abrirContacto()">Contáctame 👋</button>
+</div>
+
+<!-- HERO -->
+<div id="hero" class="hero">
+  <h1 class="fade-rise">
+    Ingeniero, aventurero<br>y aprendiz constante.
+  </h1>
+  <p class="fade-rise-d1">
+    Héctor Emilio Parra Fernández — estudiante de Ingeniería en Computación en la UNAM, apasionado por la tecnología, el arte y los límites de lo posible.
+  </p>
+  <button class="hero-cta liquid-glass fade-rise-d2" onclick="document.getElementById('bio').scrollIntoView({behavior:'smooth'})">
+    Conocerme más
+  </button>
+  <div class="scroll-hint fade-rise-d3">
+    <span></span>
+    scroll
+  </div>
+</div>
+
+<div class="section-divider"><div class="divider-line reveal"></div></div>
+
+<!-- BIO -->
+<section id="bio" style="max-width:1100px;margin:0 auto;padding:5rem 2rem">
+  <p class="section-label fade-rise">01 — Sobre mí</p>
+  <h2 class="section-title fade-rise-d1">Biografía</h2>
+
+  <!-- Layout principal: foto izquierda + contenido derecha -->
+  <div style="display:grid;grid-template-columns:420px 1fr;gap:3rem;align-items:start" class="bio-main-grid">
+
+    <!-- ============================================================
+      BLOQUE FOTOGRÁFICO CREATIVO
+      ─────────────────────────────────────────────────────────────
+      Para poner TU foto:
+        1. Guarda tu imagen en: fotos/hector.jpg
+           (funciona con .jpg, .png o .webp)
+        2. Cambia la línea del <img> de abajo:
+           src="fotos/hector.jpg"
+        3. Cambia también el atributo alt con tu nombre
+
+      Recomendación: usa una foto vertical (retrato),
+      idealmente con fondo neutro o exterior. Mínimo 600px de alto.
+    ============================================================ -->
+    <div class="bio-photo-frame reveal-left" style="position:relative">
+
+      <!-- Marco exterior con borde animado -->
+      <div class="bio-frame-outer">
+
+        <!-- La foto principal — CAMBIA EL src AQUÍ -->
+        <img
+          src="fotos/hector.jpg"
+          alt="Héctor Parra"
+          class="bio-photo-img"
+          onerror="this.style.display='none';document.getElementById('bio-photo-placeholder').style.display='flex'"
+        >
+
+        <!-- Placeholder si no hay foto todavía -->
+        <div id="bio-photo-placeholder" class="bio-photo-placeholder">
+          <div style="text-align:center">
+            <div style="font-size:4rem;margin-bottom:1rem">🧑‍💻</div>
+            <p style="font-size:0.8rem;color:rgba(255,255,255,0.4);max-width:160px;line-height:1.5">
+              Pon tu foto en<br><code style="color:rgba(100,200,255,0.7)">fotos/hector.jpg</code>
+            </p>
+          </div>
+        </div>
+
+        <!-- Overlay gradiente sobre la foto -->
+        <div class="bio-photo-overlay"></div>
+
+        <!-- Líneas de escaneo tipo HUD (decorativas) -->
+        <div class="bio-scan-lines"></div>
+
+        <!-- Esquinas tipo visor fotográfico -->
+        <div class="bio-corner bio-corner-tl"></div>
+        <div class="bio-corner bio-corner-tr"></div>
+        <div class="bio-corner bio-corner-bl"></div>
+        <div class="bio-corner bio-corner-br"></div>
+
+        <!-- Etiqueta flotante arriba-derecha: nombre -->
+        <div class="bio-tag-float bio-tag-top">
+          <span class="bio-tag-dot"></span>
+          HEPF · 2026
+        </div>
+
+        <!-- Etiqueta flotante abajo-izquierda: status -->
+        <div class="bio-tag-float bio-tag-bottom">
+          <span class="bio-tag-dot bio-tag-dot-green"></span>
+          Ing. Computación · UNAM
+        </div>
+
+      </div><!-- fin bio-frame-outer -->
+
+      <!-- Tarjeta flotante de stat que sale del marco -->
+      <div class="bio-stat-float liquid-glass">
+        <span style="font-family:var(--font-display);font-size:2rem;line-height:1;display:block">6°</span>
+        <span style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Semestre</span>
+      </div>
+
+    </div><!-- fin bio-photo-frame -->
+
+    <!-- Columna derecha: texto + stats + tags -->
+    <div style="display:flex;flex-direction:column;gap:2rem;padding-top:0.5rem">
+
+      <!-- Texto bio -->
+      <div class="bio-text reveal">
+        <p>Me defino como un aventurero, independiente y entusiasta de la tecnología. Soy un estudiante de Ingeniería en Computación en la <strong>UNAM</strong>, apasionado por mi área y en constante búsqueda de retos que desafíen mis habilidades.</p>
+        <p style="margin-top:1rem">Siempre busco ser un mejor estudiante, amigo y persona, un día a la vez. Actualmente me enfoco en proyectos que mezclan el <strong>desarrollo de software con hardware</strong>, explorando las intersecciones más fascinantes de la computación moderna.</p>
+        <p style="margin-top:1rem">Soy admirador del buen arte, la ciencia y las culturas del mundo. Mi curiosidad no tiene fronteras: del código al lienzo, de los circuitos a los idiomas.</p>
+      </div>
+
+      <!-- Stats en fila -->
+      <div class="reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,0.07);border-radius:1.25rem;overflow:hidden">
+        <div style="padding:1.25rem;background:rgba(255,255,255,0.03)">
+          <span style="font-family:var(--font-display);font-size:2rem;display:block;line-height:1">UNAM</span>
+          <span style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Casa de estudios</span>
+        </div>
+        <div style="padding:1.25rem;background:rgba(255,255,255,0.03)">
+          <span style="font-family:var(--font-display);font-size:2rem;display:block;line-height:1">5</span>
+          <span style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Idiomas</span>
+        </div>
+        <div style="padding:1.25rem;background:rgba(255,255,255,0.03)">
+          <span style="font-family:var(--font-display);font-size:2rem;display:block;line-height:1">MIT</span>
+          <span style="font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em">Meta de posgrado</span>
+        </div>
+      </div>
+
+      <!-- Tags -->
+      <div class="reveal" style="display:flex;flex-wrap:wrap;gap:0.5rem">
+        <span class="tag liquid-glass">🔧 Hardware + Software</span>
+        <span class="tag liquid-glass">🎨 Arte</span>
+        <span class="tag liquid-glass">✈️ Viajero</span>
+        <span class="tag liquid-glass">📚 Aprendiz perpetuo</span>
+        <span class="tag liquid-glass">🏎️ Velocidad</span>
+        <span class="tag liquid-glass">🔬 Ciencia</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CSS del bloque fotográfico -->
+<style>
+/* Marco exterior */
+.bio-frame-outer {
+  position: relative;
+  border-radius: 1.75rem;
+  overflow: hidden;
+  aspect-ratio: 3/4;
+  background: rgba(255,255,255,0.04);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12),
+    0 40px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
+}
+
+/* Foto */
+.bio-photo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+  transition: transform 0.6s ease;
+}
+.bio-frame-outer:hover .bio-photo-img { transform: scale(1.03); }
+
+/* Placeholder mientras no hay foto */
+.bio-photo-placeholder {
+  display: none;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.03);
+  position: absolute;
+  inset: 0;
+}
+
+/* Overlay gradiente de abajo */
+.bio-photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0,15,40,0.75) 0%,
+    rgba(0,15,40,0.2) 40%,
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+/* Líneas de escaneo finas (efecto cinematográfico) */
+.bio-scan-lines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.04) 3px,
+    rgba(0,0,0,0.04) 4px
+  );
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Esquinas tipo visor */
+.bio-corner {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+  z-index: 3;
+}
+.bio-corner-tl { top: 14px; left: 14px; border-top: 1.5px solid rgba(255,255,255,0.5); border-left: 1.5px solid rgba(255,255,255,0.5); }
+.bio-corner-tr { top: 14px; right: 14px; border-top: 1.5px solid rgba(255,255,255,0.5); border-right: 1.5px solid rgba(255,255,255,0.5); }
+.bio-corner-bl { bottom: 14px; left: 14px; border-bottom: 1.5px solid rgba(255,255,255,0.5); border-left: 1.5px solid rgba(255,255,255,0.5); }
+.bio-corner-br { bottom: 14px; right: 14px; border-bottom: 1.5px solid rgba(255,255,255,0.5); border-right: 1.5px solid rgba(255,255,255,0.5); }
+
+/* Etiquetas flotantes sobre la foto */
+.bio-tag-float {
+  position: absolute;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.75);
+  background: rgba(0,10,30,0.55);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.12);
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+}
+.bio-tag-top    { top: 1rem; right: 1rem; }
+.bio-tag-bottom { bottom: 1rem; left: 1rem; }
+
+.bio-tag-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(100,200,255,0.8);
+  box-shadow: 0 0 6px rgba(100,200,255,0.7);
+  flex-shrink: 0;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+.bio-tag-dot-green {
+  background: rgba(100,230,140,0.9);
+  box-shadow: 0 0 6px rgba(100,230,140,0.7);
+}
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.5; transform: scale(0.7); }
+}
+
+/* Tarjeta de stat flotante fuera del marco */
+.bio-stat-float {
+  position: absolute;
+  bottom: -1rem;
+  right: -1.25rem;
+  padding: 1rem 1.4rem;
+  border-radius: 1.1rem;
+  text-align: center;
+  z-index: 5;
+  min-width: 90px;
+}
+
+/* Responsive: en móvil la foto va arriba y ocupa todo el ancho */
+@media(max-width:800px){
+  .bio-main-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .bio-stat-float {
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
+}
+</style>
+
+<div class="section-divider"><div class="divider-line reveal"></div></div>
+
+<section id="gustos">
+  <p class="section-label reveal">02 — Lo que me mueve</p>
+  <h2 class="section-title reveal">Mis gustos</h2>
+
+  <!-- ================================================
+    IMAGEN FÚTBOL / FCB
+    Para usar tu propia foto:
+    Cambia la URL del src por: src="fotos/futbol.jpg"
+  ================================================ -->
+  <div class="fcb-hero reveal-scale" style="margin-bottom:4rem">
+    <img src="fotos/futbol.jpg" alt="Fútbol">
+    <div class="fcb-hero-overlay"></div>
+    <div class="fcb-hero-content">
+      <div class="fcb-shield">FCB</div>
+      <h3>Més que un club.</h3>
+      <p>Fanatico del FCBarcelona desde el 2019, casa de la mejor cantera del mundo</p>
+    </div>
+  </div>
+
+  <!-- ================================================
+    CARRUSEL DE AUTOS
+    Para cada auto, cambia el src por tu foto local:
+      auto1 → src="fotos/auto1.jpg"
+      auto2 → src="fotos/auto2.jpg"
+      auto3 → src="fotos/auto3.jpg"
+    Puedes añadir más tarjetas copiando el bloque <div class="car-card">
+  ================================================ -->
+
+  <div style="margin:3rem 0">
+    <p class="section-label reveal-right">🏎️ Automovilismo</p>
+    <h3 class="reveal-right" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">Velocidad y estilo al limite</h3>
+    <p class="reveal-right" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:600px">Mis autos favoritos</p>
+    <div class="cars-scroll">
+      <div class="car-card">
+        <img src="fotos/auto1.jpg" alt="Mazda MX-5" style="object-position: 50% 70%;">
+        <div class="car-card-label"><span>Mazda MX-5</span></div>
+      </div>
+      <div class="car-card">
+        <img src="fotos/auto2.jpg" alt="Corvette" style="object-position: 50% 70%;">
+        <div class="car-card-label"><span>Corvette</span></div>
+      </div>
+      <div class="car-card">
+        <img src="fotos/auto4.jpg" alt="FORD RAPTOR" style="object-position: 50% 65%;">
+        <div class="car-card-label"><span>FORD RAPTOR</span></div>
+      </div>
+      <div class="car-card">
+        <img src="fotos/auto5.jpg" alt="Porsche" style="object-position: 60% 65%;">
+        <div class="car-card-label"><span>Porsche</span></div>
+      </div>
+
+      <div class="car-card">
+        <img src="fotos/auto6.jpg" alt="Mustang" style="object-position: 50% 50%;">
+        <div class="car-card-label"><span>Mustang</span></div>
+      </div>
+      
+      <!-- Para agregar más autos, copia este bloque:
+      <div class="car-card">
+        <img src="fotos/auto4.jpg" alt="Nombre del auto">
+        <div class="car-card-label"><span>Nombre del auto</span></div>
+      </div>
+      -->
+    </div>
+  </div>
+
+  <!-- VIAJES -->
+  <div style="margin:3rem 0">
+    <p class="section-label reveal-right">✈️ Viajes</p>
+    <h3 class="reveal-right" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">Mis paises favoritos</h3>
+    <p class="reveal-right" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:600px">Busco nuevas culturas, comida extravagante y conexiones humanas genuinas. Cada destino deja una huella.</p>
+
+    <!-- ================================================
+      GRID DE VIAJES (6 fotos en cuadrícula 3x2)
+      Para usar tus propias fotos cambia cada src:
+        París    → src="fotos/paris.jpg"
+        Italia   → src="fotos/italia.jpg"
+        Suiza    → src="fotos/suiza.jpg"
+        Machu    → src="fotos/machu_picchu.jpg"
+        Canadá   → src="fotos/canada.jpg"
+        Londres  → src="fotos/londres.jpg"
+      Cambia también el emoji de bandera y el nombre del país
+    ================================================ -->
+    <div class="travels-grid reveal">
+      <div class="travel-card">
+        <img src="fotos/paris.jpg" alt="París" style="object-position: 50% 20%;"> 
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇫🇷</span> París</div>
+      </div>
+      <div class="travel-card">
+        <img src="fotos/roma.jpg" alt="Roma">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇮🇹</span> Italia</div>
+      </div>
+      <div class="travel-card">
+        <img src="fotos/suiza.jpg" alt="Lauterbrunnen">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇨🇭</span> Suiza</div>
+      </div>
+      <div class="travel-card">
+        <img src="fotos/peru.jpg" alt="Machu Picchu">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇵🇪</span> Machu Picchu</div>
+      </div>
+      <div class="travel-card">
+        <img src="fotos/canada.jpg" alt="Canadá">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇨🇦</span> Canadá</div>
+      </div>
+      <div class="travel-card">
+        <img src="fotos/londres.png" alt="Londres">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🇬🇧</span> Londres</div>
+      </div>
+      <!-- Para agregar más destinos, copia este bloque:
+      <div class="travel-card">
+        <img src="fotos/mi_destino.jpg" alt="Nombre del lugar">
+        <div class="travel-overlay"></div>
+        <div class="travel-label"><span class="travel-flag">🏳️</span> Nombre</div>
+      </div>
+      -->
+    </div>
+
+    <div style="margin-top:1rem" class="reveal">
+      <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:1rem">
+        <span class="tag liquid-glass">Torre Eiffel</span><span class="tag liquid-glass">Versailles</span><span class="tag liquid-glass">Louvre</span><span class="tag liquid-glass">Coliseo Romano</span><span class="tag liquid-glass">Milán</span><span class="tag liquid-glass">Lauterbrunnen</span><span class="tag liquid-glass">Cataratas del Rin</span><span class="tag liquid-glass">Cataratas del Niágara</span><span class="tag liquid-glass">Big Ben</span><span class="tag liquid-glass">Camp Nou</span><span class="tag liquid-glass">Gante</span><span class="tag liquid-glass">Brujas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================
+    SECCIÓN DE ARTE (mosaico de 3 imágenes)
+    Para usar tus propias imágenes:
+      Grande  → src="fotos/arte1.jpg"   (se ve más alta)
+      Pequeña1 → src="fotos/arte2.jpg"
+      Pequeña2 → src="fotos/arte3.jpg"
+    Cambia también el texto del pie de foto en .art-caption
+  ================================================ -->
+  <div style="margin:3rem 0">
+    <p class="section-label reveal-right">🎨 Arte</p>
+    <h3 class="reveal-right" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">Obras favoritas</h3>
+    <p class="reveal-right" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:600px">Pintura, escultura, poesía, literatura y cine los cuales han tenido algun impacto en mi.</p>
+    <div class="art-mosaic reveal">
+      <!-- Imagen grande (ocupa toda la altura izquierda) -->
+      <div class="art-big">
+        <img src="fotos/arte1.jpg" alt="Monet Nenúfares" >
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6),transparent)"></div>
+        <div class="art-caption">Claude Monet · <em style="color:var(--muted)">Nenúfares</em></div>
+      </div>
+      <!-- Imagen pequeña superior derecha -->
+      <div class="art-small">
+        <img src="fotos/arte2.jpg" alt="Miguel Angel" style="object-position: 50% 37.5%;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6),transparent)"></div>
+        <div class="art-caption">Miguel Ángel · <em style="color:var(--muted)">El David</em></div>
+      </div>
+      <!-- Imagen pequeña inferior derecha -->
+      <div class="art-small">
+        <img src="fotos/arte3.jpg" alt="Rafael" style="object-position: 50% 55%;">
+        <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.6),transparent)"></div>
+        <div class="art-caption">Rafael · <em style="color:var(--muted)">La Escuela de Atenas</em></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider"><div class="divider-line reveal"></div></div>
+
+  <!-- ================================================
+    REPRODUCTOR DE MÚSICA
+    Para agregar TUS canciones:
+    1. Pon tus archivos .mp3 en la carpeta "musica/"
+    2. En el array "tracks" (al final del HTML, en el <script>),
+       cambia cada entrada así:
+
+       { title: "Nombre canción", artist: "Artista", src: "musica/cancion1.mp3" }
+
+    Puedes agregar tantas canciones como quieras al array.
+    También puedes cambiar el emoji del arte por uno que represente la canción.
+  ================================================ -->
+
+
+  <div style="margin:3rem 0">
+    <p class="section-label reveal-right">🎵 Musica</p>
+    <h3 class="reveal-right" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">Mi Soundtrack</h3>
+    <p class="reveal-right" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:600px">Canciones que no puedo sacar de mi cabeza.</p>
+
+    <div class="music-player liquid-glass">
+  
+      <!-- NUEVO: Contenedor gigante de la portada -->
+      <div id="big-art-container" class="big-art-wrapper">
+        <img id="big-art-img" src="" alt="Portada de álbum">
+      </div>
+
+      <!-- Info y Controles -->
+      <div id="now-playing" class="music-now" style="margin-bottom: 0.5rem;">
+        <div class="music-info" style="flex:1">
+          <h4 id="np-title" style="font-size:1.2rem;margin-bottom:0.2rem">Selecciona una canción</h4>
+          <p id="np-artist" style="font-size:0.9rem;color:var(--muted)">— Haz clic en ▶</p>
+        </div>
+        <!-- Botón principal play/pause -->
+        <button id="main-play-btn" onclick="mainPlayPause()" style="width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,0.2);border:none;color:#fff;cursor:pointer;font-size:1.1rem;flex-shrink:0">▶</button>
+      </div>
+
+      <!-- Barra de progreso con tiempo -->
+      <div class="progress-bar-wrap">
+        <span id="current-time" class="time-label">0:00</span>
+        <div class="progress-bar" id="progress-bar" onclick="seekTo(event)">
+          <div class="progress-fill" id="progress-fill"></div>
+        </div>
+        <span id="total-time" class="time-label">0:00</span>
+      </div>
+
+      <!-- Control de volumen -->
+      <div class="volume-wrap">
+        <span style="font-size:0.85rem">🔉</span>
+        <input type="range" class="volume-slider" id="vol-slider" min="0" max="1" step="0.05" value="0.8" oninput="setVolume(this.value)">
+      </div>
+
+      <!-- Lista de pistas (NUNCA se oculta) -->
+      <div class="track-list" id="track-list"></div>
+    </div>
+  </div>
+
+
+<!-- INGENIERÍA -->
+  <div style="margin:3rem 0" id="ingenieria-block">
+    <p class="section-label reveal-left">⚙️ Ingeniería</p>
+    <h3 class="reveal-left" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">El arte de construir el futuro</h3>
+
+    <p class="reveal-left" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:1400px">La ingeniería no es sólo mi carrera — es la forma en que entiendo el mundo. Cada sistema, cada algoritmo, cada circuito me recuerda que los límites existen para romperse. Desde niño, desmontar y reconstruir cosas despertó en mí una curiosidad que no se ha apagado. La UNAM me dio el marco; la ingeniería me dio el propósito.</p>
+
+    <!-- Tarjeta principal de ingeniería con video de YouTube incrustado -->
+    <div class="liquid-glass reveal ing-grid" style="border-radius:2rem;overflow:hidden;padding:2rem;display:grid;grid-template-columns:1fr 1fr;gap:2rem;align-items:center">
+
+      <!-- Columna izquierda: texto e inspiración -->
+      <div>
+        <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:1.5rem">
+          <div style="width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,rgba(100,200,255,0.3),rgba(50,100,200,0.4));display:flex;align-items:center;justify-content:center;font-size:1.4rem;border:1px solid rgba(100,200,255,0.25)">⚙️</div>
+          <div>
+            <div style="font-family:var(--font-display);font-size:1.1rem">Ingeniería en Computación</div>
+            <div style="font-size:0.75rem;color:var(--muted)">UNAM · 6° Semestre</div>
+          </div>
+        </div>
+
+        <p style="font-size:0.95rem;line-height:1.75;color:rgba(255,255,255,0.75);margin-bottom:1.5rem">Lo que más me apasiona es que la ingeniería obliga a pensar diferente: no basta con entender un problema, hay que resolverlo con elegancia. Esa búsqueda constante de soluciones me ha empujado a esforzarme más, a no rendirme y a soñar en grande.</p>
+
+        <div style="display:flex;flex-wrap:wrap;gap:0.4rem;margin-bottom:1.5rem">
+          <span class="tag liquid-glass">Hardware</span>
+          <span class="tag liquid-glass">Algoritmos</span>
+          <span class="tag liquid-glass">Sistemas embebidos</span>
+          <span class="tag liquid-glass">IA & ML</span>
+          <span class="tag liquid-glass">MIT · Sueño</span>
+        </div>
+
+        <!-- Cita inspiradora -->
+        <div style="border-left:2px solid rgba(100,200,255,0.4);padding-left:1rem">
+          <p style="font-family:var(--font-display);font-size:1.05rem;color:rgba(255,255,255,0.85);line-height:1.6;font-style:italic">"La ciencia puede divertirse con el mundo tal como es, pero la ingeniería crea el mundo que nunca ha existido."</p>
+          <p style="font-size:0.75rem;color:var(--muted);margin-top:0.5rem">— Theodore von Kármán</p>
+        </div>
+      </div>
+
+      <!-- Columna derecha: reproductor de YouTube -->
+      <div>
+        <p style="font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);margin-bottom:0.75rem">▶ Video que me inspira</p>
+        <!-- Contenedor responsivo 16:9 para el video -->
+        <div style="position:relative;width:100%;padding-top:56.25%;border-radius:1rem;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,0.5)">
+          <!--
+            Para cambiar el video:
+            - Si es un video de YouTube: usa <iframe src="https://www.youtube.com/embed/ID_DEL_VIDEO?rel=0&modestbranding=1" ...>
+            - Si es un archivo local (como ahora): cambia la ruta del src abajo
+          -->
+          <video
+            id="yt-ingenieria"
+            style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border:none;"
+            src="video/VidInge.mp4"
+            controls
+            playsinline
+            preload="metadata"
+            poster="">
+            Tu navegador no soporta el elemento de video.
+          </video>
+        </div>
+        <p style="font-size:0.78rem;color:var(--muted);margin-top:0.6rem;text-align:center">How do engineers solve the world's hardest problems?</p>
+      </div>
+
+    </div>
+
+    <!-- Tarjetas de logros / motivadores -->
+    <div class="ing-cards reveal" style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem">
+      <div class="liquid-glass" style="border-radius:1.25rem;padding:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🧠</div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.25rem">Pensamiento sistémico</div>
+        <div style="font-size:0.8rem;color:var(--muted);line-height:1.5">Ver el todo antes que las partes. Comprender cómo cada pieza afecta al sistema completo.</div>
+      </div>
+      <div class="liquid-glass" style="border-radius:1.25rem;padding:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🚀</div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.25rem">Superación constante</div>
+        <div style="font-size:0.8rem;color:var(--muted);line-height:1.5">Cada examen, cada proyecto, cada bug resuelto me acerca un paso más a quien quiero ser.</div>
+      </div>
+      <div class="liquid-glass" style="border-radius:1.25rem;padding:1.5rem;text-align:center">
+        <div style="font-size:2rem;margin-bottom:0.5rem">🌐</div>
+        <div style="font-family:var(--font-display);font-size:1.1rem;margin-bottom:0.25rem">Impacto global</div>
+        <div style="font-size:0.8rem;color:var(--muted);line-height:1.5">Construir tecnología que trascienda fronteras y mejore vidas: eso es lo que me levanta cada mañana.</div>
+      </div>
+    </div>
+  </div>
+  <!-- CINE Y SERIES -->
+  <div style="margin:3rem 0">
+    <p class="section-label reveal-left">🎬 Cine y series</p>
+    <h3 class="reveal-left" style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;margin-bottom:0.5rem">Grandes Historias</h3>
+    <p class="reveal-left" style="color:var(--muted);font-size:0.95rem;margin-bottom:1.5rem;max-width:600px">Obras que he visto más de una vez y no dudaria en repetir.</p>
+    <div class="cinema-row reveal">
+      <div class="movie-card">
+        <img src="fotos/peli1.jpg" alt="Volver al Futuro" onerror="this.src='https://images.unsplash.com/photo-1440404653325-ab127d49abc1?w=300&q=80'">
+        <div class="movie-info"><span>Volver al Futuro</span></div>
+      </div>
+      <div class="movie-card">
+        <img src="fotos/peli2.jpg" alt="Your Name" onerror="this.src='https://images.unsplash.com/photo-1578632767115-351597cf2477?w=300&q=80'">
+        <div class="movie-info"><span>Your Name</span></div>
+      </div>
+      <div class="movie-card">
+        <img src="fotos/peli3.jpg" alt="Spider-Man ITSV" onerror="this.src='https://images.unsplash.com/photo-1635805737707-575885ab0820?w=300&q=80'">
+        <div class="movie-info"><span>Spider-Man: ATSV</span></div>
+      </div>
+      <div class="movie-card">
+        <img src="fotos/peli6.jpg" alt="Invencible" onerror="this.src='https://images.unsplash.com/photo-1612214069529-8bc7fba98c6a?w=300&q=80'">
+        <div class="movie-info"><span>Invencible</span></div>
+      </div>
+      <div class="movie-card">
+        <img src="fotos/peli4.jpg" alt="Big Bang Theory" onerror="this.src='https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&q=80'">
+        <div class="movie-info"><span>The Big Bang Theory</span></div>
+      </div>
+      <div class="movie-card">
+        <img src="fotos/peli5.jpg" alt="Un Show Más">
+        <div class="movie-info"><span>Un Show Más</span></div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<div class="section-divider"><div class="divider-line reveal"></div></div>
+
+<!-- TRAYECTORIA -->
+<section id="trayectoria">
+  <p class="section-label">03 — Mi camino</p>
+  <h2 class="section-title">Trayectoria escolar</h2>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">Infancia</div>
+      <div class="timeline-place">CEDAT</div>
+      <div class="timeline-desc">Centro de Atención al Talento. Desarrollo de altas capacidades cognitivas, pensamiento crítico y el primer contacto con la pasión por la tecnología.</div>
+      <span class="timeline-badge">Altas capacidades</span>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Formación básica-media</div>
+      <div class="timeline-place">Liceo Universitario José Vasconcelos</div>
+      <div class="timeline-desc">Formación rigurosa y estricta que sentó las bases de disciplina, pensamiento analítico y responsabilidad académica.</div>
+      <span class="timeline-badge">Formación integral</span>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Bachillerato</div>
+      <div class="timeline-place">Preparatoria Antonio Caso</div>
+      <div class="timeline-desc">Consolidación en ciencias exactas. Aquí se forjaron las bases matemáticas y lógicas que definen mi enfoque computacional.</div>
+      <span class="timeline-badge">Ciencias exactas</span>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">Intercambio internacional</div>
+      <div class="timeline-place">Comox Valley ISP — Canadá 🇨🇦</div>
+      <div class="timeline-desc">Una experiencia transformadora. Interacción con estudiantes de todo el mundo, consolidación del inglés a nivel fluido y apertura a nuevas perspectivas culturales.</div>
+      <span class="timeline-badge">British Columbia</span>
+    </div>
+    <div class="timeline-item" style="position:relative">
+      <div style="position:absolute;left:-8px;top:4px;width:16px;height:16px;border-radius:50%;background:rgba(100,200,255,0.8);box-shadow:0 0 12px rgba(100,200,255,0.6)"></div>
+      <div class="timeline-date">Actualidad · 6° semestre</div>
+      <div class="timeline-place" style="color:rgba(100,200,255,0.9)">Universidad Nacional Autónoma de México</div>
+      <div class="timeline-desc">Ingeniería en Computación. Enfocado en proyectos que integran hardware y software, explorando el límite entre lo físico y lo digital.</div>
+      <span class="timeline-badge" style="border-color:rgba(100,200,255,0.3);color:rgba(100,200,255,0.7)">En curso</span>
+    </div>
+    <div class="timeline-item" style="opacity:0.5">
+      <div class="timeline-date">Meta · Horizonte futuro</div>
+      <div class="timeline-place">Massachusetts Institute of Technology</div>
+      <div class="timeline-desc">Aplicar a un programa de maestría para investigación y desarrollo aplicado. El siguiente capítulo en construcción.</div>
+      <span class="timeline-badge">Maestría · Investigación</span>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="divider-line reveal"></div></div>
+
+<!-- IDIOMAS -->
+<section id="idiomas">
+  <p class="section-label">04 — Comunicación</p>
+  <h2 class="section-title">Idiomas</h2>
+  <div class="idiomas-grid">
+    <div class="idioma-card liquid-glass">
+      <div class="idioma-name">Español 🇲🇽</div>
+      <div class="idioma-level">Nativo</div>
+      <div class="level-bar"><div class="level-fill" style="width:100%"></div></div>
+      <div class="idioma-note">Mi lengua madre, español nativo.</div>
+    </div>
+    <div class="idioma-card liquid-glass">
+      <div class="idioma-name">English 🇨🇦</div>
+      <div class="idioma-level">Fluido · Avanzado</div>
+      <div class="level-bar"><div class="level-fill" style="width:88%"></div></div>
+      <div class="idioma-note">Consolidado durante mi intercambio en Comox Valley, BC. Capacidad plena de interacción internacional.</div>
+    </div>
+    <div class="idioma-card liquid-glass">
+      <div class="idioma-name">Deutsch 🇩🇪</div>
+      <div class="idioma-level">Básico · Intermedio</div>
+      <div class="level-bar"><div class="level-fill" style="width:40%"></div></div>
+      <div class="idioma-note">Dos años de estudio durante la preparatoria. Bases sólidas de gramática y vocabulario.</div>
+    </div>
+    <div class="idioma-card liquid-glass">
+      <div class="idioma-name">中文 🇨🇳</div>
+      <div class="idioma-level">Básico</div>
+      <div class="level-bar"><div class="level-fill" style="width:18%"></div></div>
+      <div class="idioma-note">Primeros pasos en el idioma más hablado del mundo. Un reto fascinante.</div>
+    </div>
+    <div class="idioma-card liquid-glass">
+      <div class="idioma-name">Català 🇪🇸</div>
+      <div class="idioma-level">Básico</div>
+      <div class="level-bar"><div class="level-fill" style="width:15%"></div></div>
+      <div class="idioma-note">Introducción a la lengua del Camp Nou. Vinculado a mi pasión por el Barça y Catalunya.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"><div class="divider-line reveal"></div></div>
+
+<!-- Destinos soñados -->
+<section style="padding-top:0;padding-bottom:6rem">
+  <div class="liquid-glass reveal" style="border-radius:2rem;overflow:hidden;padding:0">
+
+    <!-- Encabezado de la sección -->
+    <div style="padding:2rem 2.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.07)">
+      <p style="font-size:0.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:0.4rem">✈️ En la lista de pendientes</p>
+      <h3 style="font-family:var(--font-display);font-size:1.8rem;font-weight:400;line-height:1.1">Próximos destinos soñados</h3>
+    </div>
+
+    <!-- Tarjetas de destino -->
+    <div style="display:grid;grid-template-columns:repeat(4,1fr)">
+
+      <!-- China -->
+
+      <div class="destino-card" data-audio="musica/cancion_china.mp3">
+        <!-- Aquí va la imagen de tu carpeta -->
+        <img src="fotos/china.jpg" class="destino-bg" alt="Fondo China">
+        
+        <div class="destino-content">
+          <div style="font-size:2.8rem;margin-bottom:0.75rem;line-height:1">CH</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.3rem">China</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.5">La Gran Muralla, Shanghai y la antigua cultura Tang.</div>
+          <div style="margin-top:1rem;display:inline-block;font-size:0.68rem;padding:0.2rem 0.7rem;border-radius:999px;border:1px solid rgba(255,200,100,0.25);color:rgba(255,200,100,0.6)">El más soñado</div>
+        </div>
+
+
+      </div>
+
+      <!-- Japón -->
+      <div class="destino-card" data-audio="musica/cancion_japon.mp3">
+        <!-- Aquí va la imagen de tu carpeta -->
+        <img src="fotos/japon.jpg" class="destino-bg" alt="Fondo Japón">
+        
+        <div class="destino-content">
+          <div style="font-size:2.8rem;margin-bottom:0.75rem;line-height:1">🇯🇵</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.3rem">Japón</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.5">Tokio, Kioto y los cerezos en flor de primavera.</div>
+          <div style="margin-top:1rem;display:inline-block;font-size:0.68rem;padding:0.2rem 0.7rem;border-radius:999px;border:1px solid rgba(255,200,100,0.25);color:rgba(255,200,100,0.6)">El más soñado</div>
+        </div>
+      </div>
+      <!-- Nueva York -->
+      <div class="destino-card" data-audio="musica/cancion_ny.mp3">
+        <!-- Aquí va la imagen de tu carpeta -->
+        <img src="fotos/ny.jpg" class="destino-bg" alt="Fondo Japón">
+        
+        <div class="destino-content">
+          <div style="font-size:2.8rem;margin-bottom:0.75rem;line-height:1">NY</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.3rem">Nueva York</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.5">Central Park, el skyline de Manhattan y el MoMA.</div>
+          <div style="margin-top:1rem;display:inline-block;font-size:0.68rem;padding:0.2rem 0.7rem;border-radius:999px;border:1px solid rgba(255,200,100,0.25);color:rgba(255,200,100,0.6)">Prioridad alta</div>
+        </div>
+      </div>
+      <!-- Brasil -->
+
+      <div class="destino-card" data-audio="musica/cancion_brasil.mp3">
+        <!-- Aquí va la imagen de tu carpeta -->
+        <img src="fotos/brasil.jpg" class="destino-bg" alt="Fondo Brasil">
+        
+        <div class="destino-content">
+          <div style="font-size:2.8rem;margin-bottom:0.75rem;line-height:1">BR</div>
+          <div style="font-family:var(--font-display);font-size:1.5rem;margin-bottom:0.3rem">Brasil</div>
+          <div style="font-size:0.75rem;color:var(--muted);line-height:1.5">El Carnaval de Río, el Amazonas y las cataratas de Iguazú.</div>
+          <div style="margin-top:1rem;display:inline-block;font-size:0.68rem;padding:0.2rem 0.7rem;border-radius:999px;border:1px solid rgba(255,200,100,0.25);color:rgba(255,200,100,0.6)">En planes</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Pie de tarjeta: contador de destinos visitados vs soñados -->
+    <div style="padding:1.25rem 2.5rem;border-top:1px solid rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem">
+      <p style="font-size:0.78rem;color:rgba(255,255,255,0.35)">
+        16 países visitados · 4 destinos en la lista
+      </p>
+      <div style="display:flex;gap:0.4rem">
+        <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,200,100,0.6);display:inline-block"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:rgba(100,200,255,0.4);display:inline-block"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:rgba(100,220,140,0.4);display:inline-block"></span>
+        <span style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.15);display:inline-block"></span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CSS responsive para destinos en móvil -->
+<style>
+@media(max-width:700px){
+  /* En móvil los destinos van en 2 columnas */
+  .destino-card:nth-child(odd){ border-right:1px solid rgba(255,255,255,0.07) !important; }
+  .destino-card { border-bottom:1px solid rgba(255,255,255,0.07); }
+  section > div > div:nth-child(2) { grid-template-columns:repeat(2,1fr) !important; }
+}
+</style>
+
+<!-- BOTÓN VOLVER AL INICIO -->
+<div style="text-align:center;padding:2rem 0 0">
+  <button id="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    ↑ &nbsp; Volver al inicio
+  </button>
+</div>
+
+<footer style="text-align:center; padding:4rem 2rem; opacity:0.6">
+  <div style="font-family:var(--font-display); font-size:1.4rem">Héctor Emilio Parra Fernández</div>
+  <p>© 2026 · Pagina Web Proyecto Sistemas Operativos UNAM Facultad de Ingenieria</p>
+</footer>
+
+</div><!-- fin .content -->
+
+<!-- ================================================
+  ELEMENTO DE AUDIO (oculto, controlado por JS)
+  No necesitas modificar esto
+================================================ -->
+<audio id="player" style="display:none"></audio>
+
+<!-- ================================================
+  MODAL DE CONTACTO
+  Se muestra al hacer clic en "Contáctame"
+  Cambia el action del formulario o ajusta el JS
+  para enviarlo a tu correo real (ver comentario en JS)
+================================================ -->
+<div class="modal-overlay" id="contact-modal" onclick="cerrarContacto(event)">
+  <div class="modal-box">
+    <button class="modal-close" onclick="cerrarContacto(null,true)">✕</button>
+    <div class="modal-title">Hablemos 👋</div>
+    <p class="modal-sub">¿Tienes un proyecto, idea o simplemente quieres conectar? Escríbeme.</p>
+
+    <div id="modal-form">
+      <div class="modal-field">
+        <label>Tu nombre</label>
+        <input type="text" id="contact-name" placeholder="Ej. Ana García">
+      </div>
+      <div class="modal-field">
+        <label>Tu correo</label>
+        <input type="email" id="contact-email" placeholder="ana@ejemplo.com">
+      </div>
+      <div class="modal-field">
+        <label>Mensaje</label>
+        <textarea id="contact-msg" placeholder="Cuéntame de tu proyecto o idea..."></textarea>
+      </div>
+      <button class="modal-send" onclick="enviarContacto()">Enviar mensaje ✉️</button>
+    </div>
+
+    <!-- Mensaje de éxito tras enviar -->
+    <div class="modal-success" id="modal-success">
+      ¡Mensaje enviado! 🎉<br>
+      <span style="font-family:var(--font-body);font-size:0.9rem;color:var(--muted)">Te responderé pronto.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ================================================
+   LISTA DE CANCIONES
+   ================================================
+   Para usar tus archivos locales:
+   1. Pon los .mp3 en la carpeta "musica/"
+   2. Cambia "src" a la ruta local, por ejemplo:
+      src: "musica/touch_daftpunk.mp3"
+
+   Para usar canciones de internet (Spotify no funciona,
+   pero puedes usar archivos directos .mp3 en línea).
+
+   Puedes agregar o quitar canciones del array.
+   El campo "emoji" es el ícono que aparece como portada.
+================================================ */
+const tracks = [
+  {
+    title:  "Thriller",
+    artist: "Michael Jackson",
+    emoji:  "🤖",
+    cover:  "musica/portada1.jpg", // <--- Agrega tu imagen aquí
+    src:    "musica/thriller.mp3"
+  },
+  {
+    title:  "Gil",
+    artist: "Milo J",
+    emoji:  "🎸",
+    cover:  "musica/portada2.jpg",
+    src:    "musica/gil.mp3" 
+  },
+  {
+    title:  "LA MuDANZA",
+    artist: "Bad Bunny",
+    emoji:  "🤖",
+    cover:  "musica/portada3.jpg", // <--- Agrega tu imagen aquí
+    src:    "musica/la_mudanza.mp3"
+  },
+  {
+    title:  "Baile Inolvidable",
+    artist: "Bad Bunny",
+    emoji:  "🤖",
+    cover:  "musica/portada3.jpg", // <--- Agrega tu imagen aquí
+    src:    "musica/baile_inolvidable.mp3" 
+  },{
+    title:  "Dirty Diana",
+    artist: "Michael Jackson",
+    emoji:  "🤖",
+    cover:  "musica/portada5.jpg", // <--- Agrega tu imagen aquí
+    src:    "musica/dirty_diana.mp3"
+  },
+  {
+    title:  "Twist And Shout",
+    artist: "The Beatles",
+    emoji:  "🎸",
+    cover:  "musica/portada6.jpg",
+    src:    "musica/twist_and_shout.mp3" 
+  },
+  {
+    title:  "Eleanor Rigby",
+    artist: "The Beatles",
+    emoji:  "🎸",
+    cover:  "musica/portada7.jpg",
+    src:    "musica/eleanor_rigby.mp3" 
+  },
+  {
+    title:  "Suerte",
+    artist: "Shakira",
+    emoji:  "🎸",
+    cover:  "musica/portada8.jpg",
+    src:    "musica/suerte.mp3" 
+  },
+  {
+    title:  "Can't Remember to Forget You",
+    artist: "Shakira",
+    emoji:  "🎸",
+    cover:  "musica/portada9.jpg",
+    src:    "musica/shakira2.mp3" 
+  },
+  {
+    title:  "No soy una de esas",
+    artist: "Alejandro Sanz",
+    emoji:  "🎸",
+    cover:  "musica/portada11.jpg",
+    src:    "musica/no_soy_una_de_esas.mp3" 
+  }
+  /* Para agregar más canciones, copia este bloque:
+  ,{
+    title:  "Nombre canción",
+    artist: "Artista",
+    emoji:  "🎵",
+    src:    "musica/nombre_archivo.mp3"
+  }
+  */
+];
+
+/* ================================================
+   LÓGICA DEL REPRODUCTOR
+   No necesitas modificar nada de aquí en adelante
+================================================ */
+const player   = document.getElementById('player');
+const trackList= document.getElementById('track-list');
+const progFill = document.getElementById('progress-fill');
+const curTime  = document.getElementById('current-time');
+const totTime  = document.getElementById('total-time');
+const mainBtn  = document.getElementById('main-play-btn');
+let currentIdx = -1;
+
+/* Formato mm:ss para los tiempos */
+function fmtTime(s) {
+  if (isNaN(s)) return '0:00';
+  const m = Math.floor(s/60), sec = Math.floor(s%60);
+  return m + ':' + (sec < 10 ? '0' : '') + sec;
+}
+
+/* Renderizar la lista de pistas */
+function renderTracks() {
+  trackList.innerHTML = '';
+  tracks.forEach((t, i) => {
+    const isPlaying = currentIdx === i;
+    const div = document.createElement('div');
+    div.className = 'track-item' + (isPlaying ? ' playing' : '');
+    div.innerHTML = `
+      <span style="width:20px;text-align:center;font-size:0.85rem">
+        ${isPlaying ? '♫' : i+1}
+      </span>
+      <div style="flex:1">
+        <div style="font-size:0.9rem">${t.title}</div>
+        <div style="font-size:0.75rem;color:var(--muted)">${t.artist}</div>
+      </div>
+      <button class="track-btn" onclick="toggleTrack(${i})">
+        ${isPlaying && !player.paused ? '⏸' : '▶'}
+      </button>
+    `;
+    trackList.appendChild(div);
+  });
+
+  /* Actualizar botón principal */
+  mainBtn.textContent = (!player.paused && currentIdx >= 0) ? '⏸' : '▶';
+}
+
+/* Seleccionar / alternar canción */
+function toggleTrack(i) {
+  if (currentIdx === i) {
+    player.paused ? player.play() : player.pause();
+  } else {
+    currentIdx = i;
+    player.src = tracks[i].src;
+    player.volume = parseFloat(document.getElementById('vol-slider').value);
+    player.play();
+    
+    document.getElementById('np-title').textContent  = tracks[i].title;
+    document.getElementById('np-artist').textContent = tracks[i].artist;
+    
+    // Lógica para expandir la imagen
+    const artContainer = document.getElementById('big-art-container');
+    const artImg = document.getElementById('big-art-img');
+    
+    if (tracks[i].cover) {
+      artImg.src = tracks[i].cover;
+      artContainer.classList.add('active'); // Esto dispara la animación
+    } else {
+      artContainer.classList.remove('active'); // Se colapsa si no hay imagen
+    }
+  }
+  renderTracks();
+}
+
+/* Botón play/pause principal */
+function mainPlayPause() {
+  if (currentIdx === -1) { toggleTrack(0); return; }
+  player.paused ? player.play() : player.pause();
+  renderTracks();
+}
+
+/* Control de volumen */
+function setVolume(val) {
+  player.volume = parseFloat(val);
+}
+
+/* Click en barra de progreso para saltar */
+function seekTo(e) {
+  const bar  = document.getElementById('progress-bar');
+  const rect = bar.getBoundingClientRect();
+  const pct  = (e.clientX - rect.left) / rect.width;
+  if (!isNaN(player.duration)) {
+    player.currentTime = pct * player.duration;
+  }
+}
+
+/* Actualizar barra de progreso cada 250ms */
+player.addEventListener('timeupdate', () => {
+  if (!isNaN(player.duration) && player.duration > 0) {
+    const pct = (player.currentTime / player.duration) * 100;
+    progFill.style.width = pct + '%';
+    curTime.textContent  = fmtTime(player.currentTime);
+    totTime.textContent  = fmtTime(player.duration);
+  }
+});
+
+/* Cuando termina una canción, avanzar a la siguiente */
+player.addEventListener('ended', () => {
+  const next = (currentIdx + 1) % tracks.length;
+  toggleTrack(next);
+});
+
+/* Actualizar botón al pausar/reproducir */
+player.onplay = player.onpause = renderTracks;
+
+/* Inicializar lista */
+renderTracks();
+
+/* ================================================
+   MODAL DE CONTACTO
+================================================ */
+function abrirContacto() {
+  document.getElementById('contact-modal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarContacto(e, forzar) {
+  if (forzar || (e && e.target.id === 'contact-modal')) {
+    document.getElementById('contact-modal').classList.remove('open');
+    document.body.style.overflow = '';
+    /* Resetear formulario después de cerrar */
+    setTimeout(() => {
+      document.getElementById('modal-form').style.display = '';
+      document.getElementById('modal-success').style.display = 'none';
+      document.getElementById('contact-name').value  = '';
+      document.getElementById('contact-email').value = '';
+      document.getElementById('contact-msg').value   = '';
+    }, 400);
+  }
+}
+
+/* ================================================
+   ENVÍO DEL FORMULARIO
+   Por defecto abre el cliente de correo del usuario.
+   Si quieres un backend real (EmailJS, Formspree, etc.)
+   reemplaza el cuerpo de esta función.
+================================================ */
+function enviarContacto() {
+  const nombre  = document.getElementById('contact-name').value.trim();
+  const correo  = document.getElementById('contact-email').value.trim();
+  const mensaje = document.getElementById('contact-msg').value.trim();
+
+  if (!nombre || !correo || !mensaje) {
+    alert('Por favor rellena todos los campos.');
+    return;
+  }
+
+  /*
+    OPCIÓN A (predeterminada): abre el cliente de correo del navegador
+    Cambia 'tu@correo.com' por tu correo real
+  */
+  const asunto = encodeURIComponent('Contacto desde portafolio — ' + nombre);
+  const cuerpo = encodeURIComponent(
+    'Nombre: ' + nombre + '\nCorreo: ' + correo + '\n\n' + mensaje
+  );
+  window.open('mailto:hector.emilio.parra.fernandez@gmail.com?subject=' + asunto + '&body=' + cuerpo);
+
+  /*
+    OPCIÓN B: usar Formspree (servicio gratuito, sin backend)
+    1. Regístrate en formspree.io
+    2. Crea un formulario y copia tu endpoint
+    3. Comenta el bloque "OPCIÓN A" y descomenta este:
+
+  fetch('https://formspree.io/f/TUCODIGO', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name: nombre, email: correo, message: mensaje })
+  });
+  */
+
+  /* Mostrar confirmación */
+  document.getElementById('modal-form').style.display    = 'none';
+  document.getElementById('modal-success').style.display = 'block';
+  setTimeout(() => cerrarContacto(null, true), 2500);
+}
+
+/* ================================================
+   OVERLAY DINÁMICO AL HACER SCROLL
+   En el hero el video se ve claro.
+   Al salir del hero, el overlay se oscurece suavemente.
+================================================ */
+const overlayEl = document.querySelector('.overlay');
+const heroEl    = document.getElementById('hero');
+
+function actualizarOverlay() {
+  const heroBottom = heroEl.getBoundingClientRect().bottom;
+  /* heroBottom > 0 significa que el hero todavía es visible en pantalla */
+  if (heroBottom > 80) {
+    /* Interpolación suave: cuanto más abajo del hero, más opaco */
+    const progress = Math.max(0, 1 - (heroBottom / window.innerHeight));
+    const op1 = (0.25 + progress * 0.57).toFixed(2); /* 0.25 → 0.82 */
+    const op2 = (0.35 + progress * 0.53).toFixed(2); /* 0.35 → 0.88 */
+    overlayEl.style.background =
+      `linear-gradient(to bottom, rgba(0,15,40,${op1}), rgba(0,8,24,${op2}))`;
+    overlayEl.classList.remove('scrolled');
+  } else {
+    overlayEl.classList.add('scrolled');
+    overlayEl.style.background = '';
+  }
+}
+
+window.addEventListener('scroll', actualizarOverlay, { passive: true });
+actualizarOverlay(); /* Estado inicial */
+
+/* ================================================
+   SCROLL REVEAL
+   Anima los elementos cuando entran en pantalla
+================================================ */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('visible'), 50);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll(
+  '.reveal, .reveal-left, .reveal-right, .reveal-scale, .divider-line'
+).forEach(el => observer.observe(el));
+
+/* ================================================
+   MENÚ MÓVIL — DRAWER
+================================================ */
+function toggleDrawer() {
+  const drawer = document.getElementById('mobile-drawer');
+  const btn    = document.getElementById('hamburger-btn');
+  const isOpen = drawer.classList.contains('open');
+  if (isOpen) {
+    closeDrawer();
+  } else {
+    drawer.classList.add('open');
+    btn.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeDrawer() {
+  const drawer = document.getElementById('mobile-drawer');
+  const btn    = document.getElementById('hamburger-btn');
+  drawer.classList.remove('open');
+  btn.classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+/* Cerrar drawer con Escape */
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { closeDrawer(); cerrarContacto(null, true); }
+});
+</script>
+</body>
+</html>
